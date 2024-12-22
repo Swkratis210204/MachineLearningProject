@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score
 np.set_printoptions(threshold=np.inf)
 from sklearn.feature_selection import mutual_info_classif
 from tensorflow.keras.datasets import imdb
@@ -61,15 +63,32 @@ class MatrixProcessing:
             binary_vectors.append(vector)
         return binary_vectors
     
-    def count_word_frequencies_by_vectors(self, binary_vectors):
-        word_frequencies = {word: 0 for word in self.vocab_to_index.keys()}
+    # def count_word_frequencies_by_vectors(self, binary_vectors):
+    #     word_frequencies = {word: 0 for word in self.vocab_to_index.keys()}
+    #     index_to_word = {index: word for word, index in self.vocab_to_index.items()}
+    #     for vector in binary_vectors:
+    #         unique_indices = np.where(vector == 1)[0]
+    #         for index in unique_indices:
+    #             word_frequencies[index_to_word[index]] += 1
+    #     sorted_frequencies = dict(sorted(word_frequencies.items(), key=lambda item: item[1], reverse=True))
+    #     return sorted_frequencies
+    
+
+    def calculate_information_gain(self, binary_vectors, labels, top_k=1000):
+        binary_vectors = np.array(binary_vectors)
+        info_gain = mutual_info_classif(binary_vectors, labels, discrete_features=True)
         index_to_word = {index: word for word, index in self.vocab_to_index.items()}
-        for vector in binary_vectors:
-            unique_indices = np.where(vector == 1)[0]
-            for index in unique_indices:
-                word_frequencies[index_to_word[index]] += 1
-        sorted_frequencies = dict(sorted(word_frequencies.items(), key=lambda item: item[1], reverse=True))
-        return sorted_frequencies
+        
+        # Map information gain to words
+        word_info_gain = {index_to_word[idx]: gain for idx, gain in enumerate(info_gain) if idx in index_to_word}
+
+        # Sort by information gain and keep the top_k
+        sorted_info_gain = dict(sorted(word_info_gain.items(), key=lambda item: item[1], reverse=True))
+        top_words = list(sorted_info_gain.items())[:top_k]
+
+        return top_words
+
+    
 
 
 
