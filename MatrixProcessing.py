@@ -60,5 +60,17 @@ class MatrixProcessing:
                     vector[word_index] = 1
             binary_vectors.append(vector)
         return binary_vectors
+    
+    def count_word_frequencies_by_vectors(self, binary_vectors):
+        word_frequencies = {word: 0 for word in self.vocab_to_index.keys()}
+        index_to_word = {index: word for word, index in self.vocab_to_index.items()}
+        for vector in binary_vectors:
+            unique_indices = np.where(vector == 1)[0]
+            for index in unique_indices:
+                word_frequencies[index_to_word[index]] += 1
+        sorted_frequencies = dict(sorted(word_frequencies.items(), key=lambda item: item[1], reverse=True))
+        return sorted_frequencies
+
+
 
 
