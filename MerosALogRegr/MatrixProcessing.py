@@ -74,22 +74,21 @@ class MatrixProcessing:
     #     return sorted_frequencies
     
 
-    def calculate_information_gain(self, binary_vectors, labels, top_k=1000):
+    def calculate_information_gain(self, binary_vectors, labels, top_k=1000, batch_size=1000):
         binary_vectors = np.array(binary_vectors)
-        info_gain = mutual_info_classif(binary_vectors, labels, discrete_features=True)
-        index_to_word = {index: word for word, index in self.vocab_to_index.items()}
+        vocab_size = binary_vectors.shape[1]
+        info_gain = np.zeros(vocab_size)
         
-        # Map information gain to words
+        for start in range(0, vocab_size, batch_size):
+            end = min(start + batch_size, vocab_size)
+            info_gain[start:end] = mutual_info_classif(
+                binary_vectors[:, start:end], labels, discrete_features=True
+            )
+        
+        index_to_word = {index: word for word, index in self.vocab_to_index.items()}
         word_info_gain = {index_to_word[idx]: gain for idx, gain in enumerate(info_gain) if idx in index_to_word}
-
-        # Sort by information gain and keep the top_k
         sorted_info_gain = dict(sorted(word_info_gain.items(), key=lambda item: item[1], reverse=True))
         top_words = list(sorted_info_gain.items())[:top_k]
-
+        
         return top_words
-
-    
-
-
-
 
