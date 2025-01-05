@@ -49,3 +49,5 @@ htmlcov/
 *.csv
 *.tsv
 *.sqlite
+
+.venv/
