@@ -12,12 +12,17 @@ processor = MatrixProcessing(top_words=10000, skip_top_words=20, skip_least_freq
 
 # Load and filter data
 x_train, y_train, x_test, y_test = processor.load_data()
-filtered_dataset_train, word_to_index = processor.filter_vocabulary(x_train)
-filtered_dataset_test, _ = processor.filter_vocabulary(x_test)
 
+#each x,y vector has this form:
+"""x:
+[2, 2, 20, 47, 111, 439, 3445, 2, 2, 2, 166, 2, 216, 125, 40, 2, 364, 352, 707, 1187, 39, 294, 2, 22, 396, 2, 28, 2, 202, 2, 1109, 23, 94, 2, 151, 111, 211, 469, 2, 20, 2, 258, 546, 1104, 
+7273, 2, 2, 38, 78, 33, 211, 2, 2, 2, 2849, 63, 93, 2, 2, 253, 106, 2, 2, 48, 335, 267, 2, 2, 364, 1242, 1179, 20, 2, 2, 1009, 2, 1987, 189, 2, 2, 8419, 2, 2723, 2, 95, 1719, 2, 6035, 2, 3912, 7144, 49, 369, 120, 2, 28, 49, 253, 2, 2, 2, 1041, 2, 85, 795, 2, 2, 481, 2, 55, 78, 807, 2, 375, 2, 1167, 2, 794, 76, 2, 2, 58, 2, 2, 816, 2, 243, 2, 43, 50]
+y: 
+0
+"""
 # Convert reviews to binary vectors
-binary_vectors_train = processor.map_reviews_to_binary_vectors(filtered_dataset_train)
-binary_vectors_test = processor.map_reviews_to_binary_vectors(filtered_dataset_test)
+binary_vectors_train = processor.map_reviews_to_binary_vectors(x_train)
+binary_vectors_test = processor.map_reviews_to_binary_vectors(x_test)
 
 # Convert binary vectors to NumPy arrays
 binary_vectors_train = np.array(binary_vectors_train)
