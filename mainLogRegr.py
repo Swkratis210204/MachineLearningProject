@@ -8,16 +8,18 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 print("Starting the model")
 
 # Initialize processor
-processor = MatrixProcessing(top_words=10000, skip_top_words=20, skip_least_frequent=10)
+processor = MatrixProcessing(top_words=10000, skip_top_words=50, skip_least_frequent=20)
 
 # Load and filter data
 x_train, y_train, x_test, y_test = processor.load_data()
-filtered_dataset_train, word_to_index = processor.filter_vocabulary(x_train)
-filtered_dataset_test, _ = processor.filter_vocabulary(x_test)
+# for i in range(5):
+#     print(f"Review {i + 1}: {x_train[i]}", f"Category: {y_train[i]}", sep="\n")
 
 # Convert reviews to binary vectors
-binary_vectors_train = processor.map_reviews_to_binary_vectors(filtered_dataset_train)
-binary_vectors_test = processor.map_reviews_to_binary_vectors(filtered_dataset_test)
+binary_vectors_train = processor.map_reviews_to_binary_vectors(x_train)
+# for i in range(5):
+#     print(f"Review {i + 1}: {binary_vectors_train[i]}")
+binary_vectors_test = processor.map_reviews_to_binary_vectors(x_test)
 
 # Convert binary vectors to NumPy arrays
 binary_vectors_train = np.array(binary_vectors_train)
@@ -33,12 +35,17 @@ if binary_vectors_train.ndim == 1:
 if binary_vectors_test.ndim == 1:
     binary_vectors_test = binary_vectors_test.reshape(1, -1)
 
-# Calculate top words based on information gain
-top_words = processor.calculate_information_gain(binary_vectors_train, y_train, top_k=1000)
+# ...existing code...
 
-top_word_indices = list(range(1000))  # Map directly to reduced feature space
+# Calculate top words based on information gain
+top_word_indices = processor.calculate_information_gain(binary_vectors_train, y_train, top_k=1000)
+
+
+top_word_indices = top_word_indices[:binary_vectors_train.shape[1]]
+
 binary_vectors_train = binary_vectors_train[:, top_word_indices]
 binary_vectors_test = binary_vectors_test[:, top_word_indices]
+
 
 # Train and evaluate the logistic regression model
 logRegr = LogisticRegression(tolerance=1e-6)
