@@ -32,10 +32,12 @@ class AdaBoost:
         y: array of labels in {-1, +1}
         """
         n_samples, n_features = X.shape
+        print("n_samples: ", n_samples)
+        print("n_features: ", n_features)
         # Initialize weights to 1/N
         w = np.full(n_samples, (1 / n_samples))
 
-        for _ in range(self.n_clf):
+        for t in range(self.n_clf):
             clf = DecisionStump()
             min_error = float('inf')
 
@@ -44,25 +46,25 @@ class AdaBoost:
                 X_column = X[:, feature_i]
                 thresholds = np.unique(X_column)
 
-                for threshold in thresholds:
-                    polarity = 1
-                    predictions = np.ones(n_samples, dtype=int)
-                    predictions[X_column < threshold] = -1
+                threshold = (thresholds[0] + thresholds[-1]) / 2  # Compute midpoints
+                polarity = 1
+                predictions = np.ones(n_samples, dtype=int)
+                predictions[X_column < threshold] = -1
 
-                    # Calculate weighted error
-                    error = np.sum(w[y != predictions])
+                # Calculate weighted error
+                error = np.sum(w[y != predictions])
 
-                    # If error > 0.5, swap polarity
-                    if error > 0.5:
-                        error = 1 - error
-                        polarity = -1
+                # If error > 0.5, swap polarity
+                if error > 0.5:
+                    error = 1 - error
+                    polarity = -1
 
-                    # Keep the best (lowest) error stump
-                    if error < min_error:
-                        clf.polarity = polarity
-                        clf.threshold = threshold
-                        clf.feature_idx = feature_i
-                        min_error = error
+                # Keep the best (lowest) error stump
+                if error < min_error:
+                    clf.polarity = polarity
+                    clf.threshold = threshold
+                    clf.feature_idx = feature_i
+                    min_error = error
 
             EPS = 1e-10
             # Compute alpha
