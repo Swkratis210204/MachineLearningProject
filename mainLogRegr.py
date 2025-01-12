@@ -9,7 +9,7 @@ os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 print("Starting the model")
 
 # Initialize processor
-processor = MatrixProcessing(top_words=1000, skip_top_words=50, skip_least_frequent=20)
+processor = MatrixProcessing(top_words=10000, skip_top_words=50, skip_least_frequent=20)
 
 # Load and filter data
 x_train, y_train, x_test, y_test = processor.load_data()
@@ -44,7 +44,7 @@ y_test_transformed = np.where(y_test == 0, -1, 1)
 
 # Train AdaBoost
 print("Training AdaBoost...")
-adaboost = AdaBoost(n_clf=20)  # n_clf= number of weak learners (decision stumps)
+adaboost = AdaBoost(n_clf=50)  # n_clf= number of weak learners (decision stumps)
 adaboost.fit(binary_vectors_train, y_train_transformed)
 
 # Predict on train and test
