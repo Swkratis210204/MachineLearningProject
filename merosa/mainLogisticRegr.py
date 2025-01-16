@@ -1,8 +1,11 @@
+import sys
 import numpy as np
-from MatrixProcessing import MatrixProcessing
 from LogisticRegression import LogisticRegression
 import os
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_root)
 import matplotlib.pyplot as plt
+from MatrixProcessing import MatrixProcessing
 
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
 print("Starting the model")

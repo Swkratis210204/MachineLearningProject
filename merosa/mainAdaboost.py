@@ -1,7 +1,10 @@
+import sys
 import numpy as np
 from AdaBoost import AdaBoost  # <-- Import AdaBoost instead of LogisticRegression
 import os
 import matplotlib.pyplot as plt
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(project_root)
 from MatrixProcessing import MatrixProcessing
 
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
